@@ -1,0 +1,7 @@
+Both A* and Dijkstra's were both effective algorithms at finding the quickest route between two nodes and greedy sometimes found the best route 
+but not always. Dijkstra's would have had to look for longer to find the optimal path compared to A* but for such a small graph there was minimal
+difference. For a larger graph (such as a city or country) in real life A* would be much preferable because it finds the shortest path faster.
+In the case of the map given for this assignment greedy could always find a path, but it is not always certain that greedy will find a path.
+Even when greedy does find a path it is often much slower then dijkstra and A* and would take longer to find. This would be even more noticable
+for a larger graph. When it comes to small graphs it doesn't matter a lot whether you use dijkstra's or A* but for larger graphs A* is needed or
+even for smaller graphs where quick solving time is needed a lot such as for a pathfinding algorithm for a npc in a video game.

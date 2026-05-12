@@ -5,8 +5,6 @@
 #include <iterator>
 #include <queue>
 
-#include <iostream> // TODO remove this later
-
 CityMap::CityMap() {
     locations.resize(8);
 
@@ -60,7 +58,6 @@ void CityMap::printCity() const {
 int CityMap::heuristic(int from, int to) const {
     // Might return one less then expected for pythagorian tripples due to floating point errors
     return int(std::sqrt(std::pow(locations[from].x-locations[to].x, 2)+std::pow(locations[from].y-locations[to].y, 2)));
-    // TODO make sure this actually works
 }
 
 std::pair<std::vector<std::string>, int> CityMap::greedyPath(int start, int end) {
