@@ -18,6 +18,7 @@ int main() {
     std::cout << "--- Route: Downtown -> Airport ---\n\n";
 
     printResult("Greedy", city.greedyPath(0, 2));
+    printResult("Dijkstra", city.dijkstraPath(0, 2));
 
     /* Test all three algorithms on this route */
 
@@ -26,6 +27,7 @@ int main() {
     std::cout << "--- Route: Downtown -> Suburb South ---\n\n";
 
     printResult("Greedy", city.greedyPath(0, 7));
+    printResult("Dijkstra", city.dijkstraPath(0, 7));
 
     /* Test all three algorithms on this route */
 
@@ -34,6 +36,7 @@ int main() {
     std::cout << "--- Route: Downtown -> Downtown ---\n\n";
 
     printResult("Greedy", city.greedyPath(0, 0));
+    printResult("Dijkstra", city.dijkstraPath(0, 0));
 
     /* Pick your own start/end pair and test all three algorithms */
 
