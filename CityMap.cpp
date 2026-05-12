@@ -1,5 +1,10 @@
 #include "CityMap.hpp"
+#include <cmath>
 #include <iostream>
+#include <algorithm>
+#include <iterator>
+
+#include <iostream> // TODO remove this later
 
 CityMap::CityMap() {
     locations.resize(8);
@@ -49,4 +54,71 @@ void CityMap::printCity() const {
         }
         std::cout << "\n";
     }
+}
+
+int CityMap::heuristic(int from, int to) const {
+    // Might return one less then expected for pythagorian tripples due to floating point errors
+    return int(std::sqrt(std::pow(locations[from].x-locations[to].x, 2)+std::pow(locations[from].y-locations[to].y, 2)));
+    // TODO make sure this actually works
+}
+
+std::pair<std::vector<std::string>, int> CityMap::greedyPath(int start, int end) {
+    if(start >= locations.size() || end >=locations.size()) {
+        return {{}, -1};
+    }
+    if (start == end) {
+        return {{{locations[start].name}}, 0};
+    }
+
+    std::vector<int> visitedNodes = {start};
+    int currentLocation = start;
+    bool unvisitedNeighbor = true;
+    int travelTime = 0;
+
+    while(unvisitedNeighbor) {
+        // Loops until there is no unvisitedNeighbors in the current node
+        unvisitedNeighbor = false;
+        int closestNeighbor;
+        int distance = std::numeric_limits<int>::max();
+
+        for(std::pair<int, int> neighbor : locations[currentLocation].neighbors) {
+            if(std::find(std::begin(visitedNodes), std::end(visitedNodes), neighbor.first) == std::end(visitedNodes)) {
+                unvisitedNeighbor = true;
+                if(distance > neighbor.second) {
+                    closestNeighbor = neighbor.first;
+                    distance = neighbor.second;
+                }
+            }
+        }
+
+        if(unvisitedNeighbor) {
+            visitedNodes.push_back(closestNeighbor);
+            travelTime += distance;
+            if(closestNeighbor == end) {
+                return {reconstructPath(visitedNodes, start, end), travelTime};
+            }
+            currentLocation = closestNeighbor;
+        }
+    }
+    std::cout << "A";
+    return {{}, -1};
+}
+
+std::vector<std::string> CityMap::reconstructPath(const std::vector<int>& prev, int start, int end) const {
+    std::vector<std::string> returnString;
+    returnString.push_back(locations[prev[0]].name);
+    for(int i = 1; i < prev.size(); i++) {
+        returnString.push_back(locations[prev[i]].name);
+        bool found = false;
+        for(std::pair<int, int> neighbor : locations[prev[i-1]].neighbors) {
+            if(neighbor.first == prev[i]) {
+                found = true;
+            }
+        }
+        if(!found) {
+            return {};
+        } // I'm not sure what it means return empty vector if no path exists but I'm assuming its this
+    }
+    return returnString;
+    return {};
 }
