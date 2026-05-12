@@ -74,7 +74,8 @@ std::pair<std::vector<std::string>, int> CityMap::greedyPath(int start, int end)
         return {{{locations[start].name}}, 0};
     }
 
-    std::vector<int> visitedNodes = {start};
+    std::vector<bool> visitedNodes(locations.size(), false);
+    visitedNodes[start] = true;
     int currentLocation = start;
     bool unvisitedNeighbor = true;
     int travelTime = 0;
@@ -86,7 +87,7 @@ std::pair<std::vector<std::string>, int> CityMap::greedyPath(int start, int end)
 
         // Loops until there is no unvisitedNeighbors in the current node
         for(std::pair<int, int> neighbor : locations[currentLocation].neighbors) {
-            if(std::find(std::begin(visitedNodes), std::end(visitedNodes), neighbor.first) == std::end(visitedNodes)) {
+            if(!visitedNodes[neighbor.first]) {
                 unvisitedNeighbor = true;
                 if(distance > neighbor.second) {
                     closestNeighbor = neighbor.first;
@@ -96,7 +97,7 @@ std::pair<std::vector<std::string>, int> CityMap::greedyPath(int start, int end)
         }
 
         if(unvisitedNeighbor) {
-            visitedNodes.push_back(closestNeighbor);
+            visitedNodes[closestNeighbor] = true;
             prev[closestNeighbor] = currentLocation;
             travelTime += distance;
             if(closestNeighbor == end) {
@@ -118,8 +119,8 @@ std::pair<std::vector<std::string>, int> CityMap::dijkstraPath(int start, int en
     
     std::vector<int> visitedNodes = {};
     std::vector<int> prev(locations.size(), -1);
-    std::vector<int> shortestDistance(locations.size(), 100);
-    int totalTime = 0;
+    std::vector<int> shortestDistance(locations.size(), std::numeric_limits<int>::max());
+    shortestDistance[start] = 0;
     std::priority_queue<std::pair<int,int>, std::vector<std::pair<int,int>>, std::greater<std::pair<int,int>>> pq;
     pq.push({0, start});
 
@@ -139,6 +140,43 @@ std::pair<std::vector<std::string>, int> CityMap::dijkstraPath(int start, int en
     return {reconstructPath(prev, start, end), shortestDistance[end]};
 }
 
+std::pair<std::vector<std::string>, int> CityMap::aStarPath(int start, int end) {
+    if(start >= locations.size() || end >=locations.size()) {
+        return {{}, -1};
+    }
+    if (start == end) {
+        return {{{locations[start].name}}, 0};
+    }
+    std::vector<int> fScore(locations.size(), std::numeric_limits<int>::max());
+    std::vector<int> gScore(locations.size(), std::numeric_limits<int>::max());
+    gScore[start] = 0;
+    std::vector<int> hScore;
+    std::vector<int> prev(locations.size(), -1);
+    std::vector<bool> visitedNodes(locations.size(), false);
+    for(int i = 0; i < locations.size(); i++) {
+        hScore.push_back(heuristic(i, end));
+    }
+
+
+    std::priority_queue<std::pair<int,int>, std::vector<std::pair<int,int>>, std::greater<std::pair<int,int>>> pq;
+    pq.push({hScore[start], start});
+
+    while(pq.top().second != end) {
+        if(!visitedNodes[pq.top().second]) {
+            for(std::pair<int, int> neighbor : locations[pq.top().second].neighbors) {
+                if(gScore[neighbor.first] > gScore[pq.top().second] + neighbor.second) {
+                    gScore[neighbor.first] = gScore[pq.top().second] + neighbor.second;
+                    fScore[neighbor.first] = gScore[neighbor.first] + hScore[neighbor.first];
+                    prev[neighbor.first] = pq.top().second;
+                    pq.push({fScore[neighbor.first], neighbor.first});
+                }
+            }
+            visitedNodes[pq.top().second] = true;
+        }
+        pq.pop();
+    }
+    return {reconstructPath(prev, start, end), gScore[end]};
+}
 
 std::vector<std::string> CityMap::reconstructPath(const std::vector<int>& prev, int start, int end) const {
     std::vector<std::string> returnVec;

@@ -19,6 +19,7 @@ int main() {
 
     printResult("Greedy", city.greedyPath(0, 2));
     printResult("Dijkstra", city.dijkstraPath(0, 2));
+    printResult("A*", city.aStarPath(0, 2));
 
     /* Test all three algorithms on this route */
 
@@ -28,6 +29,7 @@ int main() {
 
     printResult("Greedy", city.greedyPath(0, 7));
     printResult("Dijkstra", city.dijkstraPath(0, 7));
+    printResult("A*", city.aStarPath(0, 7));
 
     /* Test all three algorithms on this route */
 
@@ -37,6 +39,7 @@ int main() {
 
     printResult("Greedy", city.greedyPath(0, 0));
     printResult("Dijkstra", city.dijkstraPath(0, 0));
+    printResult("A*", city.aStarPath(0, 0));
 
     /* Pick your own start/end pair and test all three algorithms */
 
