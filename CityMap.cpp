@@ -117,7 +117,7 @@ std::pair<std::vector<std::string>, int> CityMap::dijkstraPath(int start, int en
         return {{{locations[start].name}}, 0};
     }
     
-    std::vector<int> visitedNodes = {};
+    std::vector<bool> visitedNodes(locations.size(), false);
     std::vector<int> prev(locations.size(), -1);
     std::vector<int> shortestDistance(locations.size(), std::numeric_limits<int>::max());
     shortestDistance[start] = 0;
@@ -125,7 +125,7 @@ std::pair<std::vector<std::string>, int> CityMap::dijkstraPath(int start, int en
     pq.push({0, start});
 
     while(!pq.empty()) {
-        if(std::find(std::begin(visitedNodes), std::end(visitedNodes), pq.top().second) == std::end(visitedNodes)) {
+        if(!visitedNodes[pq.top().second]) {
             for(std::pair<int, int> neighbor : locations[pq.top().second].neighbors) {
                 if(pq.top().first+neighbor.second < shortestDistance[neighbor.first]) {
                     shortestDistance[neighbor.first] = pq.top().first+neighbor.second;
@@ -133,7 +133,7 @@ std::pair<std::vector<std::string>, int> CityMap::dijkstraPath(int start, int en
                     pq.push({shortestDistance[neighbor.first], neighbor.first});
                 }
             }
-            visitedNodes.push_back(pq.top().second);
+            visitedNodes[pq.top().second] = true;
         }
         pq.pop();
     }
